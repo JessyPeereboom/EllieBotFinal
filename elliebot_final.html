@@ -1,0 +1,99 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Ellie the English Bot (A1–A2)</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; text-align: center; }
+    #chatbox { border: 1px solid #ccc; padding: 15px; height: 300px; overflow-y: auto; margin-bottom: 15px; }
+    .user { color: blue; }
+    .bot { color: green; }
+    button { padding: 10px 20px; font-size: 16px; }
+  </style>
+</head>
+<body>
+  <h2>🎤 Talk to Ellie, your English buddy!</h2>
+  <p>Ellie is 30 years old, lives in England, and loves teaching, baking, and walking in the park.</p>
+  <div id="chatbox"></div>
+  <button onclick="startListening()">🎙️ Speak</button>
+  <script>
+    const chatbox = document.getElementById('chatbox');
+
+    function appendMessage(sender, text) {
+      const div = document.createElement('div');
+      div.className = sender;
+      div.innerText = (sender === 'user' ? 'You: ' : 'Ellie: ') + text;
+      chatbox.appendChild(div);
+      chatbox.scrollTop = chatbox.scrollHeight;
+    }
+
+    function speak(text) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'en-US';
+      speechSynthesis.speak(utterance);
+    }
+
+    function botResponse(input) {
+      input = input.toLowerCase();
+      let response = "I'm not sure I understand. Can you try saying it a different way?";
+
+      if (input.includes("hello") || input.includes("hi")) {
+        response = "Hello! I'm Ellie. How are you today?";
+      } else if (input.includes("how are you")) {
+        response = "I'm great, thank you! And you?";
+      } else if (input.includes("fine") || input.includes("good")) {
+        response = "That's great to hear!";
+      } else if (input.includes("your name")) {
+        response = "My name is Ellie. I'm your English speaking buddy.";
+      } else if (input.includes("how old are you")) {
+        response = "I'm 30 years old.";
+      } else if (input.includes("where do you live")) {
+        response = "I live in a small town in the south of England, near the sea.";
+      } else if (input.includes("what do you do") || input.includes("job")) {
+        response = "I'm an English teacher. I teach students from all around the world.";
+      } else if (input.includes("hobby") || input.includes("free time")) {
+        response = "In my free time, I love baking, reading books, and going for walks in the park.";
+      } else if (input.includes("favorite cake")) {
+        response = "My favorite cake is carrot cake. It's delicious!";
+      } else if (input.includes("thank you")) {
+        response = "You're welcome!";
+      } else if (input.includes("bye")) {
+        response = "Goodbye! Have a lovely day!";
+      } else if (input.includes("weather")) {
+        response = "Today it's sunny and a little windy. Perfect for a walk!";
+      } else if (input.includes("what time")) {
+        const now = new Date();
+        response = "It's " + now.getHours() + ":" + String(now.getMinutes()).padStart(2, '0');
+      } else if (input.includes("i like")) {
+        response = "That sounds like fun!";
+      } else if (input.includes("food") || input.includes("hungry")) {
+        response = "Would you like a sandwich, a tea, or maybe some cake?";
+      } else if (input.includes("color") || input.includes("favourite color")) {
+        response = "I like soft colors like blue and green. What's your favorite color?";
+      } else if (input.includes("routine")) {
+        response = "I usually wake up early, teach classes, and then bake or read in the evening.";
+      }
+
+      appendMessage('bot', response);
+      speak(response);
+    }
+
+    function startListening() {
+      const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+      recognition.lang = 'en-US';
+      recognition.start();
+
+      recognition.onresult = function(event) {
+        const transcript = event.results[0][0].transcript;
+        appendMessage('user', transcript);
+        botResponse(transcript);
+      };
+
+      recognition.onerror = function(event) {
+        appendMessage('bot', "Sorry, I didn't catch that. Please try again.");
+      };
+    }
+  </script>
+</body>
+</html>
